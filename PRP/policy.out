@@ -1,0 +1,39 @@
+
+If holds: var6:4 var7:3 var9:3 var10:2
+Execute: goal / SC / d=0
+
+If holds: var4:0 var6:0 var7:3 var9:3 var10:2
+Execute: stack a e / SC / d=1
+
+If holds: var0:0 var4:0 var5:0 var6:5 var7:3 var9:3 var10:2
+Execute: pick-up a / SC / d=2
+
+If holds: var0:0 var1:0 var6:5 var7:3 var9:3 var10:0
+Execute: stack e b / SC / d=3
+
+If holds: var0:0 var1:0 var4:0 var5:0 var6:5 var7:3 var9:3 var10:5
+Execute: pick-up e / SC / d=4
+
+If holds: var0:0 var3:0 var4:0 var6:5 var7:0 var9:3 var10:5
+Execute: stack b d / SC / d=5
+
+If holds: var1:0 var3:0 var4:0 var5:0 var6:5 var7:1 var9:3 var10:5
+Execute: unstack b a / SC / d=6
+
+If holds: var1:0 var3:0 var6:5 var7:1 var9:3 var10:0
+Execute: put-down e / SC / d=7
+
+If holds: var3:0 var4:0 var5:0 var6:5 var7:1 var9:3 var10:2
+Execute: unstack e b / SC / d=8
+
+If holds: var2:0 var4:0 var6:5 var7:1 var9:0 var10:2
+Execute: stack d c / SC / d=9
+
+If holds: var2:0 var3:0 var4:0 var5:0 var6:5 var7:1 var9:5 var10:2
+Execute: pick-up d / SC / d=10
+
+If holds: var8:0 var3:0 var4:0 var6:5 var7:1 var9:5 var10:2
+Execute: put-down c / SC / d=11
+
+If holds: var8:4 var2:0 var3:0 var5:0 var6:5 var7:1 var9:5 var10:2
+Execute: unstack c e / SC / d=12

@@ -1,0 +1,2 @@
+
+(geany:3457): LIBDBUSMENU-GTK-CRITICAL **: watch_submenu: assertion `GTK_IS_MENU_SHELL(menu)' failed
