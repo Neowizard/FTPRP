@@ -1,12 +1,10 @@
 # FT-PRP
 Variation of the PRP (Planner for Relelvant Policiies) FOND (Fully Observable Non-Deterministic)
-planner that usesFault-Tolerant compilation instead of All-Outcomes-Determinization
+planner that usesFault-Tolerant compilation instead of All-Outcomes-Determinization.
 
 The original PRP was invented by Christian Muise, Sheila A. McIlraith and J. Christopher Beck.
-The current version of PRP can be found at (mercurial repository):
-https://bitbucket.org/haz/planner-for-relevant-policies
-And the original paper:
-http://haz.ca/papers/muise-icaps2012-fond.pdf
+The current version of PRP can be found at (mercurial repository): https://bitbucket.org/haz/planner-for-relevant-policies
+And the original paper can be found at: http://haz.ca/papers/muise-icaps2012-fond.pdf
 
 The fault-tolerant variation replaces the All-Outcomes-Determinization found in the original
 planner with a fault-tolerant compilation of the original FOND problem to solve more complex
