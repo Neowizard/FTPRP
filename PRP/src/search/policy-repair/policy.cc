@@ -394,8 +394,9 @@ void Policy::update_policy(list<PolicyItem *> &reg_items, bool detect_deadends) 
                 for (int i = 0; i < g_nondet_mapping[rs->op->nondet_index]->size(); i++) {
                     /* Progress from the state in the current reg_step, through the i-th effect of rs->op */
                     PartialState *succ_state = new PartialState(*(rs->state), *((*(g_nondet_mapping[rs->op->nondet_index]))[i]));
-                    /* If the successor effect of this progression is a deadend, create a new deadend tuple and add it
-                     * to the new-deadends vector*/
+                    /* If the successor effect of this progression is a deadend, create a new deadend tuple containing
+                     * rs->state, the effect that lead to the deadend (successor) and the successor. Add the new
+                     * deadend to the new_deadends vector */
                     if (is_deadend(*succ_state)) {
                         generalize_deadend(*succ_state);
                         new_deadends.push_back(new DeadendTuple(succ_state, new PartialState(*(rs->state)), (*(g_nondet_mapping[rs->op->nondet_index]))[i]));
