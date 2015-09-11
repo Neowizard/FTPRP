@@ -10,4 +10,4 @@ The fault-tolerant variation replaces the All-Outcomes-Determinization found in 
 planner with a fault-tolerant compilation of the original FOND problem to solve more complex
 problems with less replanning. The fault-tolerant compilation is a variation of the compilation
 invented by Carmel Domshlak (http://iew3.technion.ac.il/~dcarmel/Papers/Sources/icaps13c.pdf),
-modified to fit the original PRP algorithm.
+modified to fit the PRP algorithm.
