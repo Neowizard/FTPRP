@@ -53,6 +53,7 @@ struct Prevail {
     }
 
     void dump() const;
+    void dump_pddl() const;
 };
 
 struct PrePost {
@@ -95,6 +96,7 @@ struct PrePost {
     }
 
     void dump() const;
+    void dump_pddl() const;
 };
 
 class Operator {

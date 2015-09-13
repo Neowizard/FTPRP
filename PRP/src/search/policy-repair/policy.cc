@@ -594,14 +594,20 @@ void Policy::init_scd() {
 bool Policy::step_scd(vector< DeadendTuple * > &failed_states, bool skip_deadends) {
     
     bool made_change = false;
+#ifdef HK_DBG
+    bool debug_scd = true;
+#else
     bool debug_scd = false;
+#endif
     //bool debug_scd = !g_silent_planning;
     
     for (list<PolicyItem *>::const_iterator op_iter = all_items.begin();
          op_iter != all_items.end(); ++op_iter)
     {
         RegressionStep *rs = (RegressionStep *)(*op_iter);
-        
+
+        /* Try to invalidate the step's strong-cyclic status. No need to work on the goal or steps that are marked
+         * as non-string-cyclic already since we'll never change their state */
         if (rs->is_sc && !(rs->is_goal)) {
             
             if (debug_scd) {

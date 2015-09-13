@@ -95,8 +95,29 @@ void Prevail::dump() const {
     cout << g_variable_name[var] << ": " << prev;
 }
 
+void Prevail::dump_pddl() const {
+    cout << g_fact_names[var][prev];
+}
+
 void PrePost::dump() const {
     cout << g_variable_name[var] << ": " << pre << " => " << post;
+    if (!cond.empty()) {
+        cout << " if";
+        for (int i = 0; i < cond.size(); i++) {
+            cout << " ";
+            cond[i].dump();
+        }
+    }
+}
+
+void PrePost::dump_pddl() const {
+    if (pre == -1) {
+        cout << "Any state ";
+    }
+    else {
+        cout << g_fact_names[var][pre];
+    }
+    cout << " ==> " << g_fact_names[var][post];
     if (!cond.empty()) {
         cout << " if";
         for (int i = 0; i < cond.size(); i++) {
@@ -110,12 +131,12 @@ void Operator::dump() const {
     cout << name << " (" << nondet_name << "):";
     for (int i = 0; i < prevail.size(); i++) {
         cout << " [";
-        prevail[i].dump();
+        prevail[i].dump_pddl();
         cout << "]";
     }
     for (int i = 0; i < pre_post.size(); i++) {
         cout << " [";
-        pre_post[i].dump();
+        pre_post[i].dump_pddl();
         cout << "]";
     }
     cout << endl;

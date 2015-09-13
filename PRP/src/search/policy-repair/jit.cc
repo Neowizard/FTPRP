@@ -37,9 +37,12 @@ bool perform_jit_repairs(Simulator *sim) {
     vector< DeadendTuple * > failed_states; // The failed states (used for creating deadends)
     
     bool debug_jic = false;
+#ifdef HK_DBG
+    debug_jic = true;
+#endif
     // In case we have an initial policy, we run the optimized scd.
     if (g_optimized_scd) {
-        g_policy->init_scd();
+        g_policy->init_scd(); /* Effectively sets is_sc to true for all items in g_policy */
         made_change = true; // This becomes false again eventually
         while (made_change)
             made_change = g_policy->step_scd(failed_states, false);
