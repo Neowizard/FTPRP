@@ -69,6 +69,12 @@ public:
 };
 
 
+/* A generator of applicable operations given a partial state. The generators use a Tree structure
+ * with GeneratorSwitchs forming internal nodes and GeneratorLeafs forming the leaves. The tree structured
+ * is used to create applicable operations by its structure. When creating the set of applicable items all that is needed
+ * is to traverse the tree from roo to a leaf. Each node holds a set of applicable items (path from root to that node
+ * defines the partial state) */
+/* TODO: This will probably require adaptation to Fault torlerant actions */
 class GeneratorBase {
 public:
     virtual ~GeneratorBase() {}
@@ -84,6 +90,8 @@ public:
     bool reg_item_done(PolicyItem *item, set<int> &vars_seen);
 };
 
+/* Internal nodes in the tree structure of generators (see GeneratorBase). These generators select a variable to use
+ * as a switch for selecting which child to traverse to. The number of children is the size of that variable's domain */
 class GeneratorSwitch : public GeneratorBase {
     int switch_var;
     list<PolicyItem *> immediate_items;

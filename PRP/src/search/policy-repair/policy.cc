@@ -48,8 +48,9 @@ bool GeneratorSwitch::check_match(const PartialState &curr, bool keep_all) {
 }
 
 void GeneratorSwitch::generate_applicable_items(const PartialState &curr, vector<PolicyItem *> &reg_items, bool keep_all) {
-    for (list<PolicyItem *>::iterator op_iter = immediate_items.begin(); op_iter != immediate_items.end(); ++op_iter)
+    for (list<PolicyItem *>::iterator op_iter = immediate_items.begin(); op_iter != immediate_items.end(); ++op_iter) {
         reg_items.push_back(*op_iter);
+    }
     
     if (curr[switch_var] != -1)
         generator_for_value[curr[switch_var]]->generate_applicable_items(curr, reg_items, keep_all);
@@ -186,7 +187,9 @@ void GeneratorEmpty::generate_cpp_input(ofstream &outfile) const {
     outfile << "check 0" << endl;
 }
 
-
+/* Returns the variable that is which is defined (it's value is not -1) the least amount of times in the partial
+ * states of the PolicyItems in reg_items, and is not in the set vars_seen.
+ * In other words, the variable with least sagnificance to reg_items which is not in vars_seen */
 int GeneratorBase::get_best_var(list<PolicyItem *> &reg_items, set<int> &vars_seen) {
     vector< pair<int,int> > var_count = vector< pair<int,int> >(g_variable_name.size());
     
@@ -216,6 +219,10 @@ int GeneratorBase::get_best_var(list<PolicyItem *> &reg_items, set<int> &vars_se
     return -1;
 }
 
+/* Returns true iff all the defined variables (variables for which the value is not -1) in op_iter->state are already
+ * in vars_seen.
+ * This means that this PolicyItem is completely covered by Generators in the generators tree (see GeneratorBase for
+ * some more details) */
 bool GeneratorBase::reg_item_done(PolicyItem *op_iter, set<int> &vars_seen) {
     for (int i = 0; i < g_variable_name.size(); i++) {
         if ((-1 != (*(op_iter->state))[i]) && (vars_seen.count(i) <= 0))
@@ -245,39 +252,48 @@ GeneratorBase *GeneratorBase::create_generator(list<PolicyItem *> &reg_items, se
 }
 
 GeneratorSwitch::GeneratorSwitch(list<PolicyItem *> &reg_items, set<int> &vars_seen) {
-    /* Get a variable from vars_seen that's unaffected by any of the operators in reg_item */
+    /* Get a variable that appears in reg_items the least amount of times and is not in vars_seen */
     switch_var = get_best_var(reg_items, vars_seen);
     
     vector< list<PolicyItem *> > value_items;
     list<PolicyItem *> default_items;
     
-    /* Initialize the value_items with am empty list of PolicyItems for each possible value of switch_var */
+    /* Initialize value_items with am empty list of PolicyItems for each possible value of switch_var */
     for (int i = 0; i < g_variable_domain[switch_var]; i++)
         value_items.push_back(list<PolicyItem *>());
     
     for (list<PolicyItem *>::iterator op_iter = reg_items.begin(); op_iter != reg_items.end(); ++op_iter) {
+        /* Are all the defined state variables in the PolicyItem op_iter already seen? */
         if (reg_item_done(*op_iter, vars_seen)) {
+            /* Since this PolicyItem is covered by the tree at this level, and according to the build process of the
+             * tree, this item only propagate down to the branches which agree with its variable assignment, we know
+             * that its operator is applicable at the state defined by the path from the root of the tree
+             * to this node */
             immediate_items.push_back(*op_iter);
+        /* Is the variable switch_var defined for the state of this PolicyItem? */
         } else if (-1 != (*((*op_iter)->state))[switch_var]) {
             value_items[(*((*op_iter)->state))[switch_var]].push_back(*op_iter);
-        } else { // == -1
+        } else { // The value of switch_var is not defined in op_iter
             default_items.push_back(*op_iter);
         }
     }
     
     vars_seen.insert(switch_var);
     
-    // Create the switch generators
+    /* For every value of switch_var */
     for (int i = 0; i < value_items.size(); i++) {
+        /* Create a subtree of generators to handle all the PolicyItems which warn't covered yet
+         * (reg_item_done == false) and for which switch_var is defined (not -1) */
         generator_for_value.push_back(create_generator(value_items[i], vars_seen));
     }
     
-    // Create the default generator
+    /* Create the default generator to handle all the PolicyItems which are not yet covered (reg_item_done == false)
+     * and for which switch_var is undefined (it's value is -1) */
     default_generator = create_generator(default_items, vars_seen);
     
     vars_seen.erase(switch_var);
 }
-
+/* TODO: make sure this is suitable for FTD (Fault Tolerant Determinization) */
 GeneratorBase *GeneratorSwitch::update_policy(list<PolicyItem *> &reg_items, set<int> &vars_seen) {
     vector< list<PolicyItem *> > value_items;
     list<PolicyItem *> default_items;
@@ -366,6 +382,10 @@ void Policy::add_item(PolicyItem *item) {
 }
 
 
+void dump_generator(GeneratorBase* generator){
+    generator->dump("");
+}
+
 void Policy::update_policy(list<PolicyItem *> &reg_items, bool detect_deadends) {
     g_timer_policy_build.resume();
 
@@ -376,7 +396,8 @@ void Policy::update_policy(list<PolicyItem *> &reg_items, bool detect_deadends) 
     if (root)
         root->update_policy(reg_items, vars_seen);
     else
-        /* TODO: Find out what's a GeneratorSwitch and what is it used for */
+        /* Create the tree of generators which generate applicable operations given a partial state
+         * Tree structure is used to allow efficient generation of applicable operators (O(|variables|) complexity)*/
         root = new GeneratorSwitch(reg_items, vars_seen);
     /* Insert all items in reg_items into all_items starting at all_items's end poisiton */
     all_items.insert(all_items.end(), reg_items.begin(), reg_items.end());
@@ -591,6 +612,7 @@ void Policy::init_scd() {
          ((RegressionStep *)(*op_iter))->is_sc = true;
 }
 
+/* TODO: Adapt this for FTD (Fault Toleran Determinization) */
 bool Policy::step_scd(vector< DeadendTuple * > &failed_states, bool skip_deadends) {
     
     bool made_change = false;
@@ -614,7 +636,7 @@ bool Policy::step_scd(vector< DeadendTuple * > &failed_states, bool skip_deadend
                 cout << "\n\n (#" << g_debug_count++ << ") Testing RegStep:" << endl;
                 rs->dump();
             }
-            
+
             for (int i = 0; i < g_nondet_mapping[rs->op->nondet_index]->size(); i++) {
                 // We use the sc_state for computing the guaranteed items, rather than
                 //  the original state for the regression step. The sc_state will be a
@@ -625,6 +647,7 @@ bool Policy::step_scd(vector< DeadendTuple * > &failed_states, bool skip_deadend
                 //  regression steps based on their sc_state then this will be valid.
                 PartialState *succ_state = new PartialState(*(rs->state), *((*(g_nondet_mapping[rs->op->nondet_index]))[i]));
                 vector<PolicyItem *> guaranteed_steps;
+                /* Store in guaranteed_steps all the PolicyItems that are applicable in succ_state*/
                 root->generate_applicable_items(*succ_state, guaranteed_steps, false);
                 
                 if (debug_scd) {
@@ -658,7 +681,8 @@ bool Policy::step_scd(vector< DeadendTuple * > &failed_states, bool skip_deadend
                     }
                     
                     
-                    
+                    /* If succ_state does not entail a failed_state, is there a deadends state-action pair that
+                     * matchs is (is a deadend action applicable in succ_state) */
                     if (!is_failed_state) {
                         if (g_deadend_states->check_match(*succ_state, true)) {
                             is_failed_state = true;
@@ -667,7 +691,8 @@ bool Policy::step_scd(vector< DeadendTuple * > &failed_states, bool skip_deadend
                             }
                         }
                     }
-                    
+
+                    /* TODO: WTF?!!! if it's a failed state, it's marked as SC to avoid further search??? */
                     // If succ_state is a failed state, then we will avoid using
                     //  this pair in the future as it will be a FSAP. Thus, we
                     //  can leave it marked so that the search doesn't continue
@@ -678,7 +703,7 @@ bool Policy::step_scd(vector< DeadendTuple * > &failed_states, bool skip_deadend
                     if (is_failed_state && skip_deadends) {
                         break;
                     }
-                    
+                    /* TODO: What is "rollout"? */
                     // If succ_state isn't a failed state (as far as we're aware
                     //  of), then it may be reached during rollout. The possibility
                     //  of not handling the reached state means that this can't be

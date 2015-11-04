@@ -41,6 +41,7 @@ void dump_reg_steps(list<PolicyItem *> reg_steps) {
 #endif
 
 
+
 int main(int argc, const char **argv) {
     register_event_handlers();
     std::ifstream* input = NULL;

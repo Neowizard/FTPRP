@@ -1,5 +1,0 @@
-(pick-up_DETDUP_1 b5 b4)
-(pick-up_DETDUP_0 b2 b1)
-(put-on-block_DETDUP_0 b2 b5)
-(pick-up_DETDUP_0 b1 b3)
-(put-on-block_DETDUP_0 b1 b2)

@@ -56,22 +56,23 @@ bool perform_jit_repairs(Simulator *sim) {
     for (int i = 0; i < g_goal.size(); i++) {
         (*goal_orig)[g_goal[i].first] = g_goal[i].second;
     }
-    
+
+
     current_state = new PartialState(g_initial_state());
     current_goal = new PartialState(*goal_orig);
-    open_list.push(SCNode(current_state, current_goal, NULL, NULL, NULL));
-    
+
     created_states.push_back(current_state);
     created_states.push_back(current_goal);
     
     if (debug_jic)
         cout << "\n\nStarting another JIC round." << endl;
-    
+
+    open_list.push(SCNode(current_state, current_goal, NULL, NULL, NULL));
     while (!open_list.empty() && (g_timer_jit() < g_jic_limit)) {
         num_checked_states++;
         current_state = open_list.top().full_state;
         previous_state = open_list.top().previous_state;
-        current_goal = open_list.top().expected_state;
+        current_goal = open_list.top().expected_state; /* Not actually a goal. Just the target of the local planning */
         prev_regstep = open_list.top().prev_regstep;
         prev_op = open_list.top().prev_op;
         open_list.pop();
@@ -80,7 +81,8 @@ bool perform_jit_repairs(Simulator *sim) {
             cout << "\n\nChecking state:" << endl;
             current_state->dump_pddl();
         }
-        
+
+        /* Have we seen this current state in this JIC round already? */
         if (0 == seen.count(*current_state)) {
             
             seen.insert(*current_state);
@@ -89,7 +91,7 @@ bool perform_jit_repairs(Simulator *sim) {
             RegressionStep * regstep = g_policy->get_best_step(*current_state);
             
             bool have_solution = true;
-            
+            /* Current policy undefined for this state, replan for it */
             if (0 == regstep) {
             
                 sim->set_state(current_state);
@@ -114,8 +116,8 @@ bool perform_jit_repairs(Simulator *sim) {
                 //
                 while (have_solution && !(g_policy->get_best_step(*current_state)))
                     have_solution = sim->replan();
-                
-                
+
+                /* TODO: Figure this part out. What it does and how */
                 // Add the new goals to the sc condition for the previous reg step
                 if (g_optimized_scd && prev_regstep && have_solution) {
                     
@@ -193,6 +195,7 @@ bool perform_jit_repairs(Simulator *sim) {
                             }
                         }
                     }
+                    /* TODO: is this just an optimization? Remove and check correctness */
                     // We add this one extra time to ensure a DFS traversal of the
                     //  state space when looking for a strong cyclic solution. This
                     //  introduces a duplicate, but the outer if statement catches

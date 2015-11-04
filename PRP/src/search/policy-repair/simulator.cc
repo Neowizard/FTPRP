@@ -124,7 +124,7 @@ void Simulator::reset_goal() {
     for (int i = 0; i < g_goal_orig.size(); i++)
         g_goal.push_back(make_pair(g_goal_orig[i].first, g_goal_orig[i].second));
 }
-
+/* Given a goal and initial stae, plan locally and then update the policy with this local plan */
 bool Simulator::replan() {
     
     // If the policy is complete, searching further won't help us
@@ -157,8 +157,10 @@ bool Simulator::replan() {
         g_initial_state_data[i] = (*current_state)[i];
     
     if (g_plan_locally) {
-        if (verbose)
-            cout << "Resetting the goal state." << endl;
+        if (verbose) {
+            cout << "changing the goal state to:" << endl;
+            current_goal->dump_pddl();
+        }
         
         g_goal.clear();
         for (int i = 0; i < g_variable_name.size(); i++) {
@@ -183,7 +185,7 @@ bool Simulator::replan() {
     g_timer_engine_init.stop();
     
     bool try_again = g_plan_locally; // Will hold later only if the engine was created, and no plan works, and we want to plan locally
-    
+    /* If there was a SolvableError exception while resetting the engine and we are planning locally */
     if (!engine_ready && g_plan_locally) {
         try_again = false;
         if (verbose)

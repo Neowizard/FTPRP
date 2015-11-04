@@ -42,13 +42,22 @@ Operator::Operator(istream &in, bool axiom) {
         g_max_action_cost = max(g_max_action_cost, cost);
 
         check_magic(in, "end_operator");
-        
+#ifdef FTD
+        // The nondet name is the original name of the non-deterministic action
+        string::size_type ftd_pos = name.find("_ftd");
+        if (ftd_pos == string::npos) {
+            nondet_name = name;
+        } else {
+            nondet_name = name.substr(0, ftd_pos) + name.substr(name.find(" "), string::npos);
+        }
+#else
         // The nondet name is the original name of the non-deterministic action
         if (name.find("_DETDUP") == string::npos) {
             nondet_name = name;
         } else {
             nondet_name = name.substr(0, name.find("_DETDUP")) + name.substr(name.find(" "), string::npos);
         }
+#endif /*FTD*/
         
     } else {
         name = "<axiom>";
