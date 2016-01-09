@@ -2,6 +2,8 @@ package Common;
 
 public class SpecificPredicates {
 
+    public static String DummyObj = "d1";
+    public static String Dummytype = "dummyType";
     public static String Level = "level";
     public static String LevelType = "levelType";
     public static String ParLevel = "?level";

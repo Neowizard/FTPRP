@@ -64,6 +64,7 @@ public class Converter {
 
         types.addAll(inDomain.ObjectTypes);
         types.add(SpecificPredicates.LevelType);
+        types.add(SpecificPredicates.Dummytype);
 
         return types;
     }
@@ -130,11 +131,11 @@ public class Converter {
 
         //Copy existing
         newObjects.addAll(inProblem.Objects);
-
+        newObjects.add(new Parameter (SpecificPredicates.DummyObj, true, SpecificPredicates.Dummytype));
         //Add specific objects
         newObjects.add(new Parameter(SpecificPredicates.Level + "_0_0", true, SpecificPredicates.LevelType));
         for (int i = 1; i <= K; i++) {
-            for (int j = 1; j < B; j++) {
+            for (int j = 0; j < B; j++) {
                 newObjects.add(new Parameter(SpecificPredicates.Level + "_" + i + "_" + j, true, SpecificPredicates.LevelType));
             }
         }
@@ -166,7 +167,7 @@ public class Converter {
         //openParam.add(SpecificPredicates.Level+"_0_0");
         //newInit.add(new Literal(SpecificPredicates.Closed, LiteralType.Neg, openParam));
         for (int i = 1; i <= K; i++) {
-            for (int j = 1; j < B; j++) {
+            for (int j = 0; j < B; j++) {
                 ArrayList<Parameter> param = new ArrayList<Parameter>();
                 param.add(new Parameter(SpecificPredicates.Level + "_" + i + "_" + j));
                 newInit.add(new Literal(SpecificPredicates.Closed, LiteralType.Pos, param));
@@ -230,7 +231,7 @@ public class Converter {
 
     private ArrayList<Action> CreateBaseActions(InputDomain inDomain, int k, int b) {
         ArrayList<Action> baseActions = new ArrayList<Action>();
-
+        Action tempAction;
         for (Action action : inDomain.Actions) {
             if (action.getClass() == NonDeterministicAction.class) {
                 NonDeterministicAction nondetAction = (NonDeterministicAction) action;
@@ -242,7 +243,10 @@ public class Converter {
                 }
                 for (F_Effect nondetEffect : nondetAction.NonDetEffects) {
                     nondetEffect.EffectFFunc = 0;
-                    baseActions.add(CreateBaseAction(action, inDomain, 0, 0, k, b));
+                    tempAction = CreateBaseAction(action, inDomain, 0, 0, k, b);
+                    if (tempAction != null) {
+                        baseActions.add(tempAction);
+                    }
                     nondetEffect.EffectFFunc = 1;
                 }
                 for (int effectIdx = 0; effectIdx < nondetAction.NonDetEffects.size(); effectIdx++) {
@@ -251,11 +255,13 @@ public class Converter {
 
             } else {
                 // Create 0_0 level for a deterministic action
-                baseActions.add(CreateBaseAction(action, inDomain, 0, 0, k, b));
-            }
+                tempAction = CreateBaseAction(action, inDomain, 0, 0, k, b);
+                if (tempAction != null) {
+                    baseActions.add(tempAction);
+                }            }
 
             for (int i = 1; i <= k; i++) {
-                for (int j = 1; j < b; j++) {
+                for (int j = 0; j < b; j++) {
                     if (action.getClass() == NonDeterministicAction.class) {
                         NonDeterministicAction nondetAction = (NonDeterministicAction) action;
                         int[] originalFFunc = new int[nondetAction.NonDetEffects.size()];
@@ -266,8 +272,10 @@ public class Converter {
                         }
                         for (F_Effect nondetEffect : nondetAction.NonDetEffects) {
                             nondetEffect.EffectFFunc = 0;
-                            baseActions.add(CreateBaseAction(action, inDomain, i, j, k, b));
-                            nondetEffect.EffectFFunc = 1;
+                            tempAction = CreateBaseAction(action, inDomain, i, j, k, b);
+                            if (tempAction != null) {
+                                baseActions.add(tempAction);
+                            }                            nondetEffect.EffectFFunc = 1;
                         }
                         for (int effectIdx = 0; effectIdx < nondetAction.NonDetEffects.size(); effectIdx++) {
                             nondetAction.NonDetEffects.get(effectIdx).EffectFFunc = originalFFunc[effectIdx];
@@ -275,8 +283,10 @@ public class Converter {
 
                     } else {
                         // deterministic action
-                        baseActions.add(CreateBaseAction(action, inDomain, 0, 0, k, b));
-                    }
+                        tempAction = CreateBaseAction(action, inDomain, i, j, k, b);
+                        if (tempAction != null) {
+                            baseActions.add(tempAction);
+                        }                    }
                 }
             }
         }
@@ -284,12 +294,14 @@ public class Converter {
         return baseActions;
     }
 
+    /* Returns null if created action has no effect */
     private Action CreateBaseAction(Action action, InputDomain inDomain, int i, int j, int k, int b) {
         if (action.getClass() == NonDeterministicAction.class) {
             NonDeterministicAction nondetAction = (NonDeterministicAction) action;
             for (F_Effect nondetEffect : nondetAction.NonDetEffects) {
                 if (nondetEffect.EffectFFunc == 0) {
-                    return CreateBaseAction(action, inDomain, i, j, k, b, "FTD_" + nondetEffect.Name);
+
+                    return CreateBaseAction(action, inDomain, i, j, k, b, "_FTD_" + nondetEffect.Name);
                 }
             }
             /* Couldn't find a primary effect for this action */
@@ -301,7 +313,7 @@ public class Converter {
     }
 
     private Action CreateBaseAction(Action action, InputDomain inDomain, int currFaultLvl, int branch, int maxFaults, int branchingFactor, String pEffect) {
-        Action newAct = new Action(action.Name + "_" + currFaultLvl + "_" + branch + "_" + pEffect);
+        Action newAct = new Action(action.Name + "_" + currFaultLvl + "_" + branch + pEffect);
         //Parameters
         newAct.Params.addAll(action.Params);
         //Preconditions
@@ -391,7 +403,7 @@ public class Converter {
                         Literal closedLit = new Literal(SpecificPredicates.Closed, LiteralType.Neg, closedLevel);
                         newNonDetEff.AddedLiterals.add(closedLit);
 
-                        /* TODO: HK_CONTINUE
+
                         /* Set up a list of literals that need to be copied from the current level to the new
                             level opened by this non-det effect.
                             All (and only) predicates unaffected by this effect should be copied. */
@@ -480,6 +492,11 @@ public class Converter {
 
         }
 
+
+        if (newAct.Effects.size() <= 0)
+        {
+            return null;
+        }
         return newAct;
     }
 
@@ -495,6 +512,9 @@ public class Converter {
                 newEff.EffType = EffectType.Multi;
                 newEff.MultiParams.addAll(predicate.Params);
 
+                if (predicate.Params.size() == 0) {
+                    newEff.MultiParams.add(new Parameter("?" + SpecificPredicates.DummyObj, true, SpecificPredicates.Dummytype));
+                }
                 //Conditions
                 Literal newLit = new Literal(predicate.Name, type);
                 for (Parameter param : predicate.Params) {
@@ -637,7 +657,7 @@ public class Converter {
         //add Goal achiever for 0,0 level
         goalAchActions.add(CreateGoalAchiever(inDomain, inProblem, 0, 0, k, b));
         for (int i = 1; i <= k; i++) {
-            for (int j = 1; j < b; j++) {
+            for (int j = 0; j < b; j++) {
                 //Add action to Achieved actions
                 goalAchActions.add(CreateGoalAchiever(inDomain, inProblem, i, j, k, b));
             }
@@ -649,7 +669,9 @@ public class Converter {
     private Action CreateGoalAchiever(InputDomain inDomain, InProblem inProblem, int i, int j, int k, int b) {
         Action newAct = new Action(SpecificActions.goal_achieved_level + "_" + i + "_" + j);
         //Add preconditions
+        /* HK: not-in-transaction predicates are redundent after the new enhancements
         newAct.PreConditions.addAll(GetAllNotInTransaction(inDomain));
+        */
         ArrayList<Parameter> params = new ArrayList<Parameter>();
         params.add(new Parameter(SpecificPredicates.Level + "_" + i + "_" + j));
         Literal notClosed = new Literal(SpecificPredicates.Closed, LiteralType.Neg, params);

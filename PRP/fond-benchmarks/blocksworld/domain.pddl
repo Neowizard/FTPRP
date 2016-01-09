@@ -1,5 +1,5 @@
 (define (domain blocks-domain)
-  (:requirements :non-deterministic :equality :typing)
+  (:requirements :non-deterministic :equality :typing) ; Domain can use the equality special operator ('='), should support types and may contain non-det actions
   (:types block)
   (:predicates (holding ?b - block) (emptyhand) (on-table ?b - block) (on ?b1 ?b2 - block) (clear ?b - block))
   (:action pick-up
@@ -24,7 +24,14 @@
   (:action put-down
     :parameters (?b - block)
     :precondition (holding ?b)
-    :effect (and (on-table ?b) (emptyhand) (clear ?b) (not (holding ?b)))
+    :effect (
+             and
+             (forall ( ?b1 ?b2 - block)
+                     (when (on ?b1 ?b2) (on ?b1 ?b2)))
+             (on-table ?b)
+             (emptyhand)
+             (clear ?b)
+             (not (holding ?b)))
   )
   (:action pick-tower
     :parameters (?b1 ?b2 ?b3 - block)

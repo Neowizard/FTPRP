@@ -32,20 +32,20 @@ public class Action implements Serializable {
     }
 
     public String toString() {
-        String repString = Name + " \r\nParameters:\r\n";
+        String repString = Name + " \nParameters:\n";
 
         for (Parameter param : Params) {
             repString += param;
         }
 
-        repString += "PreConditions:\r\n";
+        repString += "PreConditions:\n";
         for (Literal lit : PreConditions) {
-            repString = repString + lit.toString() + "\r\n";
+            repString = repString + lit.toString() + "\n";
         }
 
-        repString += "Effects:\r\n";
+        repString += "Effects:\n";
         for (Effect eff : Effects) {
-            repString = repString + eff.toString() + "\r\n";
+            repString = repString + eff.toString() + "\n";
         }
         return repString;
     }

@@ -1,41 +1,26 @@
 <Problem>
-  <Name>bw_5_2</Name>
+  <Name>simple_blocks_problem</Name>
   <DomainName>blocks-domain</DomainName>
   <Objects>
     <Parameter>
       <Name>b1</Name>
       <IsTypedParam>true</IsTypedParam>
-      <ParamType>block</ParamType>
+      <ParamType>block_t</ParamType>
     </Parameter>
     <Parameter>
-      <Name>b2</Name>
+      <Name>t1</Name>
       <IsTypedParam>true</IsTypedParam>
-      <ParamType>block</ParamType>
-    </Parameter>
-    <Parameter>
-      <Name>b3</Name>
-      <IsTypedParam>true</IsTypedParam>
-      <ParamType>block</ParamType>
-    </Parameter>
-    <Parameter>
-      <Name>b4</Name>
-      <IsTypedParam>true</IsTypedParam>
-      <ParamType>block</ParamType>
-    </Parameter>
-    <Parameter>
-      <Name>b5</Name>
-      <IsTypedParam>true</IsTypedParam>
-      <ParamType>block</ParamType>
+      <ParamType>block_t</ParamType>
     </Parameter>
   </Objects>
   <InitState>
     <Literal>
-      <Name>emptyhand</Name>
+      <Name>not_emptyhand</Name>
       <Type>Pos</Type>
       <Params/>
     </Literal>
     <Literal>
-      <Name>on-table</Name>
+      <Name>inhand</Name>
       <Type>Pos</Type>
       <Params>
         <Parameter>
@@ -46,87 +31,11 @@
       </Params>
     </Literal>
     <Literal>
-      <Name>on-table</Name>
-      <Type>Pos</Type>
-      <Params>
-        <Parameter>
-          <Name>b2</Name>
-          <IsTypedParam>false</IsTypedParam>
-          <ParamType></ParamType>
-        </Parameter>
-      </Params>
-    </Literal>
-    <Literal>
-      <Name>on-table</Name>
-      <Type>Pos</Type>
-      <Params>
-        <Parameter>
-          <Name>b3</Name>
-          <IsTypedParam>false</IsTypedParam>
-          <ParamType></ParamType>
-        </Parameter>
-      </Params>
-    </Literal>
-    <Literal>
-      <Name>on</Name>
-      <Type>Pos</Type>
-      <Params>
-        <Parameter>
-          <Name>b4</Name>
-          <IsTypedParam>false</IsTypedParam>
-          <ParamType></ParamType>
-        </Parameter>
-        <Parameter>
-          <Name>b2</Name>
-          <IsTypedParam>false</IsTypedParam>
-          <ParamType></ParamType>
-        </Parameter>
-      </Params>
-    </Literal>
-    <Literal>
-      <Name>on</Name>
-      <Type>Pos</Type>
-      <Params>
-        <Parameter>
-          <Name>b5</Name>
-          <IsTypedParam>false</IsTypedParam>
-          <ParamType></ParamType>
-        </Parameter>
-        <Parameter>
-          <Name>b1</Name>
-          <IsTypedParam>false</IsTypedParam>
-          <ParamType></ParamType>
-        </Parameter>
-      </Params>
-    </Literal>
-    <Literal>
       <Name>clear</Name>
       <Type>Pos</Type>
       <Params>
         <Parameter>
-          <Name>b3</Name>
-          <IsTypedParam>false</IsTypedParam>
-          <ParamType></ParamType>
-        </Parameter>
-      </Params>
-    </Literal>
-    <Literal>
-      <Name>clear</Name>
-      <Type>Pos</Type>
-      <Params>
-        <Parameter>
-          <Name>b4</Name>
-          <IsTypedParam>false</IsTypedParam>
-          <ParamType></ParamType>
-        </Parameter>
-      </Params>
-    </Literal>
-    <Literal>
-      <Name>clear</Name>
-      <Type>Pos</Type>
-      <Params>
-        <Parameter>
-          <Name>b5</Name>
+          <Name>t1</Name>
           <IsTypedParam>false</IsTypedParam>
           <ParamType></ParamType>
         </Parameter>
@@ -140,7 +49,7 @@
       <Params/>
     </Literal>
     <Literal>
-      <Name>on-table</Name>
+      <Name>on</Name>
       <Type>Pos</Type>
       <Params>
         <Parameter>
@@ -148,90 +57,8 @@
           <IsTypedParam>false</IsTypedParam>
           <ParamType></ParamType>
         </Parameter>
-      </Params>
-    </Literal>
-    <Literal>
-      <Name>on-table</Name>
-      <Type>Pos</Type>
-      <Params>
         <Parameter>
-          <Name>b2</Name>
-          <IsTypedParam>false</IsTypedParam>
-          <ParamType></ParamType>
-        </Parameter>
-      </Params>
-    </Literal>
-    <Literal>
-      <Name>on-table</Name>
-      <Type>Pos</Type>
-      <Params>
-        <Parameter>
-          <Name>b3</Name>
-          <IsTypedParam>false</IsTypedParam>
-          <ParamType></ParamType>
-        </Parameter>
-      </Params>
-    </Literal>
-    <Literal>
-      <Name>on</Name>
-      <Type>Pos</Type>
-      <Params>
-        <Parameter>
-          <Name>b4</Name>
-          <IsTypedParam>false</IsTypedParam>
-          <ParamType></ParamType>
-        </Parameter>
-        <Parameter>
-          <Name>b1</Name>
-          <IsTypedParam>false</IsTypedParam>
-          <ParamType></ParamType>
-        </Parameter>
-      </Params>
-    </Literal>
-    <Literal>
-      <Name>on</Name>
-      <Type>Pos</Type>
-      <Params>
-        <Parameter>
-          <Name>b5</Name>
-          <IsTypedParam>false</IsTypedParam>
-          <ParamType></ParamType>
-        </Parameter>
-        <Parameter>
-          <Name>b2</Name>
-          <IsTypedParam>false</IsTypedParam>
-          <ParamType></ParamType>
-        </Parameter>
-      </Params>
-    </Literal>
-    <Literal>
-      <Name>clear</Name>
-      <Type>Pos</Type>
-      <Params>
-        <Parameter>
-          <Name>b3</Name>
-          <IsTypedParam>false</IsTypedParam>
-          <ParamType></ParamType>
-        </Parameter>
-      </Params>
-    </Literal>
-    <Literal>
-      <Name>clear</Name>
-      <Type>Pos</Type>
-      <Params>
-        <Parameter>
-          <Name>b4</Name>
-          <IsTypedParam>false</IsTypedParam>
-          <ParamType></ParamType>
-        </Parameter>
-      </Params>
-    </Literal>
-    <Literal>
-      <Name>clear</Name>
-      <Type>Pos</Type>
-      <Params>
-        <Parameter>
-          <Name>b5</Name>
+          <Name>t1</Name>
           <IsTypedParam>false</IsTypedParam>
           <ParamType></ParamType>
         </Parameter>

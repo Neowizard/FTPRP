@@ -37,18 +37,18 @@ public class Problem implements Serializable {
     }
 
     public String toString() {
-        String repString = "Problem '" + Name + "'\r\nDomain: " + DomainName + "\r\nObjects:\r\n ";
+        String repString = "Problem '" + Name + "'\nDomain: " + DomainName + "\nObjects:\n ";
 
         for (Parameter obj : Objects) {
-            repString = repString + obj + "\r\n";
+            repString = repString + obj + "\n";
         }
-        repString += "InitState:\r\n";
+        repString += "InitState:\n";
         for (Literal lit : InitState) {
-            repString = repString + lit.toString() + "\r\n";
+            repString = repString + lit.toString() + "\n";
         }
-        repString += "GoalState:\r\n";
+        repString += "GoalState:\n";
         for (Literal lit : GoalState) {
-            repString = repString + lit.toString() + "\r\n";
+            repString = repString + lit.toString() + "\n";
         }
         return repString;
     }

@@ -50,23 +50,23 @@ public class Effect implements Serializable {
     }
 
     public String toString() {
-        String repString = Name + " " + EffType.toString() + "\r\nMultiParams:\r\n";
+        String repString = Name + " " + EffType.toString() + "\nMultiParams:\n";
 
         if (MultiParams != null)
             for (Parameter param : MultiParams) {
                 repString += param;
             }
 
-        repString += "AddedLiterals:\r\n";
+        repString += "AddedLiterals:\n";
         if (AddedLiterals != null)
             for (Literal lit : AddedLiterals) {
-                repString = repString + lit.toString() + "\r\n";
+                repString = repString + lit.toString() + "\n";
             }
 
-        repString += "DeletedLiterals:\r\n";
+        repString += "DeletedLiterals:\n";
         if (DeletedLiterals != null)
             for (Literal lit : DeletedLiterals) {
-                repString = repString + lit.toString() + "\r\n";
+                repString = repString + lit.toString() + "\n";
             }
 
         return repString;
@@ -103,7 +103,7 @@ public class Effect implements Serializable {
             for (Parameter param : MultiParams) {
                 paramString = paramString + param.toPDDL();
             }
-            paramString = paramString + ")\r\n ";
+            paramString = paramString + ")\n ";
             repString.insert(0, paramString);
         }
 

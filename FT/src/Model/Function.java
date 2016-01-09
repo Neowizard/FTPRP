@@ -24,9 +24,9 @@ public class Function implements Serializable {
     }
 
     public String toString() {
-        String repString = Name + "\r\nParameters:";
+        String repString = Name + "\nParameters:";
         for (String param : Params) {
-            repString = repString + "\r\n" + param;
+            repString = repString + "\n" + param;
         }
         return repString;
     }

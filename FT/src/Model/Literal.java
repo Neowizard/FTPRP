@@ -46,7 +46,7 @@ public class Literal implements Serializable {
 
     public String toString() {
 
-        String repString = Name + " " + Type.toString() + "\r\nParameters:\r\n";
+        String repString = Name + " " + Type.toString() + "\nParameters:\n";
 
         if (Params != null)
             for (Parameter param : Params) {

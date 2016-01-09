@@ -33,13 +33,15 @@ public class ConditionalEffect extends Effect implements Serializable {
         int litCounter = 0;
 
         if (Conditions != null && Conditions.size() > 0) {
-            litString = litString + "\t\t\t(when (";
+            litString = litString + "\t\t\t(when ";
             if (Conditions.size() > 1)
-                litString = litString + "and ";
+                litString = litString + "(and ";
             for (Literal lit : Conditions) {
                 litString = litString + lit.toPDDL() + " ";
             }
-            litString = litString + ") ";
+            if (Conditions.size() > 1) {
+                litString = litString + ") ";
+            }
         }
 
         if (AddedLiterals != null)
@@ -65,7 +67,7 @@ public class ConditionalEffect extends Effect implements Serializable {
             for (Parameter param : MultiParams) {
                 paramString = paramString + " " + param.toPDDL();
             }
-            paramString = paramString + ")\r\n";
+            paramString = paramString + ")\n";
             repString.insert(0, paramString);
             repString.append("))");
         }

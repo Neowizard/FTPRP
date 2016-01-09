@@ -34,20 +34,20 @@ public class Domain implements Serializable {
     }
 
     public String toString() {
-        String repString = "Domain '" + Name + "'\r\n";
+        String repString = "Domain '" + Name + "'\n";
 
-        repString += "Types:\r\n";
+        repString += "Types:\n";
         for (String type : ObjectTypes) {
-            repString = repString + type.toString() + "\r\n";
+            repString = repString + type.toString() + "\n";
         }
-        repString += "Predicates:\r\n";
+        repString += "Predicates:\n";
         for (Literal lit : Predicates) {
-            repString = repString + lit.toString() + "\r\n";
+            repString = repString + lit.toString() + "\n";
         }
 
-        repString += "Actions:\r\n";
+        repString += "Actions:\n";
         for (Action act : Actions) {
-            repString = repString + act.toString() + "\r\n";
+            repString = repString + act.toString() + "\n";
         }
 
         return repString;
