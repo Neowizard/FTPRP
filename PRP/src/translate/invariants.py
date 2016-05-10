@@ -272,7 +272,7 @@ class Invariant:
 
     def operator_unbalanced(self, action, enqueue_func):
         inv_vars = find_unique_variables(action, self)
-        relevant_effs = [eff for eff in action.effects
+        relevant_effs = [eff for eff in action.effects 
                          if self.predicate_to_part.get(eff.literal.predicate)]
         add_effects = [eff for eff in relevant_effs
                        if not eff.literal.negated]

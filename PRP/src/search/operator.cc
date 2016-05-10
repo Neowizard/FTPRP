@@ -43,13 +43,12 @@ Operator::Operator(istream &in, bool axiom) {
 
         check_magic(in, "end_operator");
 #ifdef FTD
-        // The nondet name is the original name of the non-deterministic action
-        string::size_type ftd_pos = name.find("_ftd");
-        if (ftd_pos == string::npos) {
-            nondet_name = name;
-        } else {
-            nondet_name = name.substr(0, ftd_pos) + name.substr(name.find(" "), string::npos);
-        }
+
+        /* FTD: The actual nondet name is calculated in read_everything, since we need to first read all the operators
+         * ti know the max-fault level in order to know which operators to link (only the operators of the
+         * deepest fault level are linked).
+         */
+        nondet_name = name;
 #else
         // The nondet name is the original name of the non-deterministic action
         if (name.find("_DETDUP") == string::npos) {

@@ -113,7 +113,8 @@ public:
     void dump() const;
     std::string get_name() const {return name; }
     std::string get_nondet_name() const {return nondet_name; }
-    
+    /* TODO: Assert name = nondet_name before assigning */
+    void set_nondet_name(std::string name) {nondet_name = name;}
     int nondet_index;
     PartialState * all_fire_context;
 

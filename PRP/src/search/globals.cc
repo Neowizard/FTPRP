@@ -17,6 +17,7 @@
 #include "policy-repair/regression.h"
 #include "policy-repair/deadend.h"
 
+#include <algorithm>
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -26,9 +27,12 @@
 #include <string>
 #include <vector>
 #include <sstream>
+
 using namespace std;
 
 #include <ext/hash_map>
+#include <cstring>
+
 using namespace __gnu_cxx;
 
 #include "state_registry.h"
@@ -283,6 +287,73 @@ void read_axioms(istream &in) {
     g_axiom_evaluator = new AxiomEvaluator;
 }
 
+inline int try_atoi(const std::string& str, unsigned long offset)
+{
+    const char* curr_char = str.c_str() + offset;
+
+    int res = 0;
+    while ((*curr_char <= '9') && (*curr_char >= '0'))
+    {
+        res = res * 10 + (*curr_char - '0');
+        curr_char++;
+    }
+
+    return res;
+}
+
+int get_op_fault_level(const Operator &op) {
+
+    unsigned long indexof_ftd = op.get_name().find("_ftd_");
+    unsigned long ftd_marker_end = indexof_ftd + sizeof("_ftd_");
+    if (indexof_ftd == std::string::npos)
+    {
+        return -1;
+    }
+
+    unsigned long fault_level_start = op.get_name().find("_", ftd_marker_end) + 1;
+
+    return try_atoi(op.get_name(), fault_level_start);
+}
+
+void set_op_nondet_name(Operator & op)
+{
+    std::string op_name = op.get_name();
+    unsigned long ftd_marker_start = op_name.find("_ftd_");
+    unsigned long op_branch_start = op_name.find("_", ftd_marker_start + sizeof("_ftd_"));
+    unsigned long op_params_start = op_name.find(" ");
+    std::string op_branch = op_name.substr(op_branch_start, op_params_start - op_branch_start);
+
+    std::string nondet_name = op_name.substr(0, op_name.find("_ftd")) +
+                                op_branch +
+                                op_name.substr(op_params_start, std::string::npos);
+
+
+    op.set_nondet_name(nondet_name); // TODO: Where are all the e1 operators?
+}
+
+void set_ops_nondet_name()
+{
+    int max_fault_level = 0;
+    int fault_level = 0;
+    for (int op_idx = 0; op_idx < g_operators.size(); op_idx++)
+    {
+        fault_level = get_op_fault_level(g_operators[op_idx]);
+        if (fault_level > max_fault_level)
+        {
+            max_fault_level = fault_level;
+        }
+    }
+
+    for (int op_idx = 0; op_idx < g_operators.size(); op_idx++)
+    {
+        fault_level = get_op_fault_level(g_operators[op_idx]);
+        if (fault_level == max_fault_level)
+        {
+            set_op_nondet_name(g_operators[op_idx]);
+        }
+    }
+}
+
 void read_everything(istream &in) {
     read_and_verify_version(in);
     read_metric(in);
@@ -295,9 +366,12 @@ void read_everything(istream &in) {
     }
     check_magic(in, "end_state");
     g_default_axiom_values = g_initial_state_data;
-
     read_goal(in);
+
     read_operators(in);
+    set_ops_nondet_name();
+
+
     read_axioms(in);
     check_magic(in, "begin_SG");
     g_successor_generator_orig = read_successor_generator(in);
@@ -322,6 +396,7 @@ void read_everything(istream &in) {
     
     /* Build the data structures required for mapping between the
      * deterministic actions and their non-deterministic equivalents. */
+
     int cur_nondet = 0;
     for (int i = 0; i < g_operators.size(); i++) {
         

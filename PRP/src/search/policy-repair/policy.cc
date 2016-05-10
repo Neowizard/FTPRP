@@ -612,7 +612,7 @@ void Policy::init_scd() {
          ((RegressionStep *)(*op_iter))->is_sc = true;
 }
 
-/* TODO: Adapt this for FTD (Fault Toleran Determinization) */
+/* TODO: Adapt this for FTD (Fault Tolerant Determinization) */
 bool Policy::step_scd(vector< DeadendTuple * > &failed_states, bool skip_deadends) {
     
     bool made_change = false;

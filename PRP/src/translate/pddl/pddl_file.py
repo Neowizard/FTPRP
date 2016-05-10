@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env pythonEclipse
 
 try:
     # Python 3.x

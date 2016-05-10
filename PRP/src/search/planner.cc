@@ -17,7 +17,6 @@
 #include <new>
 using namespace std;
 
-#ifdef HK_DBG
 void dump_reg_steps(list<PolicyItem *> reg_steps) {
     int step_idx = 0;
     for (list<PolicyItem *>::reverse_iterator op_iter = reg_steps.rbegin(); op_iter != reg_steps.rend(); ++op_iter)
@@ -38,7 +37,6 @@ void dump_reg_steps(list<PolicyItem *> reg_steps) {
     }
 
 }
-#endif
 
 
 
@@ -143,8 +141,10 @@ int main(int argc, const char **argv) {
     cout << "\n\nRegressing the plan..." << endl;
     list<PolicyItem *> regression_steps = perform_regression(engine->get_plan(), g_goal, 0, true);
 
+#ifdef HK_DBG
     cout << "reg_steps according to initial plan:" << endl;
     dump_reg_steps(regression_steps);
+#endif /* HK_DBG */
 
     cout << "\n\nGenerating an initial policy..." << endl;
     g_policy = new Policy();
