@@ -1,0 +1,6 @@
+(define (problem simple_blocks_problem)
+  (:domain blocks-domain)
+  (:objects b1 t1 b2 t2 b3 t3 b4 t4 - block_t)
+  (:init (emptyhand) (on b1 t1) (clear b1) (on b2 t2) (clear b2) (on b3 t3) (clear b3) (on b4 t4) (clear b4))
+  (:goal (and (on b1 b2) (on b2 b3) (on b3 b4) (on b4 t3))))
+)
