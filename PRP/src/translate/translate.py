@@ -644,6 +644,8 @@ def parse_args():
     argparser.add_argument(
         "--relaxed", dest="generate_relaxed_task", action="store_true",
         help="output relaxed task (no delete effects)")
+    argparser.add_argument("--ftd", action="store_true", dest="ftd_mode",
+                           help="FTD mode - Improved analysis for FTD domains, and modified output format")
     return argparser.parse_args()
 
 
@@ -652,7 +654,7 @@ def main():
 
     timer = timers.Timer()
     with timers.timing("Parsing", True):
-        task = pddl.open(task_filename=args.task, domain_filename=args.domain)
+        task = pddl.open(args)
 
     with timers.timing("Normalizing task"):
         normalize.normalize(task)

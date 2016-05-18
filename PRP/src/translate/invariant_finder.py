@@ -24,7 +24,7 @@ class BalanceChecker(object):
             heavy_act = action
             for eff in action.effects:
                 too_heavy_effects.append(eff)
-                if eff.parameters:  # universal effect
+                if eff.parameters: # universal effect
                     create_heavy_act = True
                     too_heavy_effects.append(eff.copy())
                 if not eff.literal.negated:
@@ -88,8 +88,8 @@ def get_initial_invariants(task):
     for predicate in get_fluents(task):
 
         # FTD specific code
-        # Avoid including predicates of non-0-0 branch level. They will be added after analysis.
-        if (fault_level_pred_re.match(predicate.name) is not None):
+        # Avoid including FT predicates not on the 0-0 branch level. They will be added after analysis.
+        if (task.ftd_domain) and (fault_level_pred_re.match(predicate.name) is not None):
             continue
         # End of FTD code
 
@@ -102,9 +102,7 @@ def get_initial_invariants(task):
 
 # Input file might be grounded, beware of too many invariant candidates
 MAX_CANDIDATES = 100000
-
-
-# MAX_TIME = 300 <-- This is now set in the PRP script and passed in as an argument
+#MAX_TIME = 300 <-- This is now set in the PRP script and passed in as an argument
 
 def find_invariants(task, reachable_action_params):
     candidates = deque(get_initial_invariants(task))
@@ -135,7 +133,8 @@ def useful_groups(invariants, task):
             predicate_to_invariants[predicate].append(invariant)
 
     # FTD specific code
-    initial_facts = clone_init_to_branches(task.init, task)
+    if (task.ftd_domain):
+        initial_facts = clone_init_to_branches(task.init, task)
     # End of FTD code
     nonempty_groups = set()
     overcrowded_groups = set()
@@ -224,7 +223,8 @@ def get_groups(task, reachable_action_params=None):
         invariants = sorted(find_invariants(task, reachable_action_params))
 
         # FTD specific code
-        invariants = clone_invariant_to_branches(invariants, task)
+        if (task.ftd_domain):
+            invariants = clone_invariant_to_branches(invariants, task)
         # End of FTD code
 
     with timers.timing("Checking invariant weight"):

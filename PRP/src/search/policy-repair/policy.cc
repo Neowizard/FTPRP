@@ -614,13 +614,15 @@ void Policy::init_scd() {
 
 /* TODO: Adapt this for FTD (Fault Tolerant Determinization) */
 bool Policy::step_scd(vector< DeadendTuple * > &failed_states, bool skip_deadends) {
-    
+
     bool made_change = false;
-#ifdef HK_DBG
-    bool debug_scd = true;
-#else
     bool debug_scd = false;
-#endif
+    if (g_debug_repair)
+    {
+        debug_scd = true;
+    }
+
+
     //bool debug_scd = !g_silent_planning;
     
     for (list<PolicyItem *>::const_iterator op_iter = all_items.begin();

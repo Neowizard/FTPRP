@@ -1,4 +1,4 @@
-#! /usr/bin/env pythonEclipse
+#! /usr/bin/env python
 
 try:
     # Python 3.x
@@ -25,7 +25,12 @@ def parse_pddl_file(type, filename):
     except parser.ParseError as e:
         raise SystemExit("Error: Could not parse %s file: %s\n" % (type, filename))
 
-def open(task_filename=None, domain_filename=None):
+def open(args):
+
+    task_filename=args.task
+    domain_filename=args.domain
+    ftd_mode = args.ftd_mod
+
     if task_filename is None:
         if len(sys.argv) not in (2, 3):
             raise SystemExit("Error: Need exactly one or two command line arguments.\n"
@@ -52,7 +57,7 @@ def open(task_filename=None, domain_filename=None):
 
     domain_pddl = parse_pddl_file("domain", domain_filename)
     task_pddl = parse_pddl_file("task", task_filename)
-    return tasks.Task.parse(domain_pddl, task_pddl)
+    return tasks.Task.parse(domain_pddl, task_pddl, ftd_mode)
 
 if __name__ == "__main__":
     open().dump()

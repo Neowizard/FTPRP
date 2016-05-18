@@ -12,7 +12,7 @@ from . import f_expression
 
 class Task(object):
     def __init__(self, domain_name, task_name, requirements,
-                 types, objects, predicates, functions, init, goal, actions, axioms, use_metric):
+                 types, objects, predicates, functions, init, goal, actions, axioms, use_metric, ftd_domain=False):
         self.domain_name = domain_name
         self.task_name = task_name
         self.requirements = requirements
@@ -26,6 +26,7 @@ class Task(object):
         self.axioms = axioms
         self.axiom_counter = 0
         self.use_min_cost_metric = use_metric
+        self.ftd_domain = ftd_domain
 
     def add_axiom(self, parameters, condition):
         name = "new-axiom@%d" % self.axiom_counter
@@ -36,9 +37,9 @@ class Task(object):
         return axiom
 
     @staticmethod
-    def parse(domain_pddl, task_pddl):
+    def parse(domain_pddl, task_pddl, ftd_mode):
         domain_name, domain_requirements, types, constants, predicates, functions, actions, axioms \
-                     = parse_domain(domain_pddl)
+                     = parse_domain(domain_pddl, ftd_mode)
         task_name, task_domain_name, task_requirements, objects, init, goal, use_metric = parse_task(task_pddl)
 
         assert domain_name == task_domain_name
@@ -96,7 +97,7 @@ class Requirements(object):
     def __str__(self):
         return ", ".join(self.requirements)
 
-def parse_domain(domain_pddl):
+def parse_domain(domain_pddl, ftd_mode):
     iterator = iter(domain_pddl)
 
     define_tag = next(iterator)
@@ -162,7 +163,7 @@ def parse_domain(domain_pddl):
             axiom = axioms.Axiom.parse(entry)
             the_axioms.append(axiom)
         else:
-            action_copies = actions.Action.parse(entry)
+            action_copies = actions.Action.parse(entry, ftd_mode)
             the_actions.extend(action_copies)
     yield the_actions
     yield the_axioms

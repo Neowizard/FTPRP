@@ -24,7 +24,7 @@ class Action(object):
         self.uniquify_variables() # TO_DO: uniquify variables in cost?
     def __repr__(self):
         return "<Action %r at %#x>" % (self.name, id(self))
-    def parse(alist):
+    def parse(alist, ftd_mode):
         iterator = iter(alist)
         action_tag = next(iterator)
         assert action_tag == ":action"
@@ -53,10 +53,10 @@ class Action(object):
         effect_list = next(iterator)
         try:
             cost_eff_pairs = effects.parse_effects(effect_list)
-            #if 1 == len(cost_eff_pairs):
-            cost_eff_pairs = [(cost_eff_pairs[0][0], cost_eff_pairs[0][1], '')]
-            #else:
-            #    cost_eff_pairs = [(cost_eff_pairs[i][0], cost_eff_pairs[i][1], "_DETDUP_%d" % i) for i in range(len(cost_eff_pairs))]
+            if (ftd_mode) or (1 == len(cost_eff_pairs)):
+                cost_eff_pairs = [(cost_eff_pairs[0][0], cost_eff_pairs[0][1], '')]
+            else:
+                cost_eff_pairs = [(cost_eff_pairs[i][0], cost_eff_pairs[i][1], "_DETDUP_%d" % i) for i in range(len(cost_eff_pairs))]
         except ValueError as e:
             raise SystemExit("Error in Action %s\nReason: %s." % (name, e))
         for rest in iterator:

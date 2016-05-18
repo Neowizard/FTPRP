@@ -42,22 +42,26 @@ Operator::Operator(istream &in, bool axiom) {
         g_max_action_cost = max(g_max_action_cost, cost);
 
         check_magic(in, "end_operator");
-#ifdef FTD
 
-        /* FTD: The actual nondet name is calculated in read_everything, since we need to first read all the operators
-         * ti know the max-fault level in order to know which operators to link (only the operators of the
-         * deepest fault level are linked).
-         */
-        nondet_name = name;
-#else
-        // The nondet name is the original name of the non-deterministic action
-        if (name.find("_DETDUP") == string::npos) {
-            nondet_name = name;
-        } else {
-            nondet_name = name.substr(0, name.find("_DETDUP")) + name.substr(name.find(" "), string::npos);
+
+        if (!g_ftd_mode)
+        {
+            // The nondet name is the original name of the non-deterministic action
+            if (name.find("_DETDUP") == string::npos) {
+                nondet_name = name;
+            } else {
+                nondet_name = name.substr(0, name.find("_DETDUP")) + name.substr(name.find(" "), string::npos);
+            }
         }
-#endif /*FTD*/
-        
+        else
+        {
+            /* FTD: The actual nondet name is calculated in read_everything, since we need to first read all the operators
+             * to know the max-fault level in order to know which operators to link (only the operators of the
+             * deepest fault level are linked).
+             */
+            nondet_name = name;
+        }
+
     } else {
         name = "<axiom>";
         cost = 0;

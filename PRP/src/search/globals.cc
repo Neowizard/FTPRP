@@ -315,7 +315,7 @@ int get_op_fault_level(const Operator &op) {
     return try_atoi(op.get_name(), fault_level_start);
 }
 
-void set_op_nondet_name(Operator & op)
+void set_ftd_op_nondet_name(Operator &op)
 {
     std::string op_name = op.get_name();
     unsigned long ftd_marker_start = op_name.find("_ftd_");
@@ -331,7 +331,7 @@ void set_op_nondet_name(Operator & op)
     op.set_nondet_name(nondet_name); // TODO: Where are all the e1 operators?
 }
 
-void set_ops_nondet_name()
+void set_ftd_ops_nondet_name()
 {
     int max_fault_level = 0;
     int fault_level = 0;
@@ -349,7 +349,7 @@ void set_ops_nondet_name()
         fault_level = get_op_fault_level(g_operators[op_idx]);
         if (fault_level == max_fault_level)
         {
-            set_op_nondet_name(g_operators[op_idx]);
+            set_ftd_op_nondet_name(g_operators[op_idx]);
         }
     }
 }
@@ -369,7 +369,10 @@ void read_everything(istream &in) {
     read_goal(in);
 
     read_operators(in);
-    set_ops_nondet_name();
+    if (g_ftd_mode)
+    {
+        set_ftd_ops_nondet_name();
+    }
 
 
     read_axioms(in);
@@ -571,11 +574,15 @@ bool g_seeded = false; // Only want to seed once
 int g_trial_depth = 1000; // Used to limit the number of simulation steps
 int g_num_trials = 1; // Number of trials that should be used for the simulation
 double g_jic_limit = 1800.0; // Limit for the just-in-case repairs
+
+bool g_ftd_mode = false;
+
 vector<pair<int, int> > g_goal_orig;
 Heuristic *g_heuristic_for_reachability;
 int g_dump_policy = 0; // Whether or not we should dump the policy
 
-bool g_debug = false; // Flag for debugging parts of the code
+bool g_debug_repair = false;
+bool g_debug_scd = false;
 int g_debug_count = 1; // Index that allows to locate spots in the output
 
 Timer g_timer_regression;

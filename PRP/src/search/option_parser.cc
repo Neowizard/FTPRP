@@ -270,6 +270,9 @@ SearchEngine *OptionParser::parse_cmd_line(
         } else if (arg.compare("--debug-output") == 0) {
             ++i;
             g_silent_planning = (1 != atoi(argv[i]));
+        } else if (arg.compare("--debug-repair") == 0) {
+            ++i;
+            g_debug_repair = (atoi(argv[i]) == 1);
         } else if (arg.compare("--input") == 0) {
             ++i;
         } else {
@@ -334,6 +337,8 @@ string OptionParser::usage(string progname) {
                     "    Dump the policy to the file policy.out. 1 creates a switch graph, while 2 creates a human readable form.\n\n"
                     "--debug-output 1/0\n"
                     "    Output plans and other information during the planning process.\n\n"
+                    "--debug-repair 1/0\n"
+                    "    Output debug logs for policy repair operations.\n\n"
                     "See http://www.haz.ca/research/prp for details.";
     return usage;
 }

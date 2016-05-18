@@ -159,7 +159,6 @@ bool Simulator::replan() {
     if (g_plan_locally) {
         if (verbose) {
             cout << "changing the goal state to:" << endl;
-            current_goal->dump_pddl();
         }
         
         g_goal.clear();

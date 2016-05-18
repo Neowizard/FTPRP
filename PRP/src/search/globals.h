@@ -126,11 +126,15 @@ extern bool g_seeded; // Used to make sure we only seed the rng once
 extern int g_trial_depth; // Used to limit the number of simulation steps
 extern int g_num_trials; // Number of trials that should be used for the simulation
 extern double g_jic_limit; // Limit for the just-in-case repairs
+
+extern bool g_ftd_mode;
+
 extern std::vector<std::pair<int, int> > g_goal_orig;
 extern Heuristic *g_heuristic_for_reachability;
 extern int g_dump_policy; // Whether or not we should dump the policy
 
-extern bool g_debug; // Flag for debugging parts of the code
+extern bool g_debug_repair;
+extern bool g_debug_scd;
 extern int g_debug_count; // Index that allows to locate spots in the output
 
 /* Timers */
